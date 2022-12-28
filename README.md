@@ -1,3 +1,7 @@
 # Sudoku Solver
 
-This is the boilerplate for the Sudoku Solver project. Instructions to complete your project can be found at https://www.freecodecamp.org/learn/quality-assurance/quality-assurance-projects/sudoku-solver
+A sample project implemented by Jephthah M. Orobia for freeCodeCamp.org as a partial requirement for the "Quality Assurance Certification".
+
+## Demo
+
+https://fcc-project-sudoku-solver.jephthah-orobia.repl.co
