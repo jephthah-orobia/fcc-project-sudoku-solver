@@ -45,34 +45,33 @@ class SudokuSolver {
     throw Error('invalid row column');
   }
 
-  validate(puzzleString) {
+  validateString(str) {
+    if (str.length != 81)
+      throw 'Expected puzzle to be 81 characters long';
     for (let i = 0; i < 81; i++)
-      if (puzzleString[i] !== '.') {
-        const [r, c] = this.toRowCol(i);
-        if (!(this.checkRowPlacement(puzzleString, r, c, puzzleString[i])
-          && this.checkColPlacement(puzzleString, r, c, puzzleString[i])
-          && this.checkRegionPlacement(puzzleString, r, c, puzzleString[i])))
-          return false;
-      }
+      if (!'.123456789'.includes(str[i]))
+        throw 'Invalid characters in puzzle';
     return true;
   }
 
+  validate(puzzleString) {
+    if (this.validateString(puzzleString)) {
+      for (let i = 0; i < 81; i++)
+        if (puzzleString[i] !== '.') {
+          const [r, c] = this.toRowCol(i);
+          if (!(this.checkRowNoValidation(puzzleString, r, c, puzzleString[i])
+            && this.checkColNoValidation(puzzleString, r, c, puzzleString[i])
+            && this.checkRegionNoValidation(puzzleString, r, c, puzzleString[i])))
+            return false;
+        }
+      return true;
+    }
+    else
+      return false;
+  }
 
   noDuplicateIn(puzzleString, row, column, value, sieve) {
-    if (puzzleString.length != 81)
-      throw 'Expected puzzle to be 81 characters long';
-    for (let i = 0; i < 81; i++)
-      if (!'.123456789'.includes(puzzleString[i]))
-        throw 'Invalid characters in puzzle';
-    if (!Number.isInteger(row) || row < 0 || row > 8)
-      throw 'Invalid coordinate';
-    if (!Number.isInteger(column) || column < 0 || column > 8)
-      throw 'Invalid coordinate';
-    if (!'123456789'.includes(value))
-      throw 'Invalid value';
-
     const index = this.toIndex(row, column);
-
     // if the position on the puzzleString is not vacant and value is not in that position.
     if (puzzleString[index] != '.' && puzzleString[index] != value)
       return false;
@@ -89,17 +88,50 @@ class SudokuSolver {
     return true;
   }
 
+  validateRowCol(n) {
+    if (!Number.isInteger(n) || n < 0 || n > 8)
+      throw 'Invalid coordinate';
+    return true;
+  }
+
+  validateValue(c) {
+    if (!'123456789'.includes(c))
+      throw Error("Invalid value");
+    return true;
+  }
+
+  validateCheckArguments(str, r, c, v) {
+    return this.validateString(str)
+      && this.validateRowCol(r) && this.validateRowCol(c)
+      && this.validateValue(v);
+  }
+
   checkRowPlacement(puzzleString, row, column, value) {
+    return this.validateCheckArguments(puzzleString, row, column, value)
+      && this.checkRowNoValidation(puzzleString, row, column, value);
+  }
+
+  checkRowNoValidation(puzzleString, row, column, value) {
     return this.noDuplicateIn(puzzleString, row, column, value,
       (i) => this.toRowCol(i)[0] == row);
   }
 
   checkColPlacement(puzzleString, row, column, value) {
+    return this.validateCheckArguments(puzzleString, row, column, value)
+      && this.checkColNoValidation(puzzleString, row, column, value);
+  }
+
+  checkColNoValidation(puzzleString, row, column, value) {
     return this.noDuplicateIn(puzzleString, row, column, value,
       (i) => this.toRowCol(i)[1] == column);
   }
 
   checkRegionPlacement(puzzleString, row, column, value) {
+    return this.validateCheckArguments(puzzleString, row, column, value)
+      && this.checkRegionNoValidation(puzzleString, row, column, value);
+  }
+
+  checkRegionNoValidation(puzzleString, row, column, value) {
     const r0 = Math.floor(row / 3) * 3,
       rf = r0 + 3,
       c0 = Math.floor(column / 3) * 3,
@@ -115,6 +147,36 @@ class SudokuSolver {
   solve(puzzleString) {
     if (!this.validate(puzzleString))
       throw "Puzzle connot be solved";
+
+    const solveNoValidation = (toSolve) => {
+      const chars = toSolve.split('');
+      for (let i = 0; i < 81; i++) {
+        if (chars[i] == '.') {
+          const [row, col] = this.toRowCol(i),
+            candidates = [];
+          for (let c = 1; c < 10; c++) {
+            if (this.checkRowNoValidation(toSolve, row, col, c.toString())
+              && this.checkColNoValidation(toSolve, row, col, c.toString())
+              && this.checkRegionNoValidation(toSolve, row, col, c.toString()))
+              candidates.push(c.toString())
+            if (candidates.length > 1)
+              break;
+          }
+          if (candidates.length == 1)
+            chars[i] = candidates[0];
+        }
+      }
+      const newPuzzleString = chars.join('');
+      if (!/\./.test(newPuzzleString))
+        return newPuzzleString;
+      if (toSolve === newPuzzleString)
+        throw Error("Puzzle connot be solved");
+      return solveNoValidation(newPuzzleString);
+    }
+
+    if (!/\./.test(puzzleString))
+      return puzzleString;
+    return solveNoValidation(puzzleString);
   }
 }
 

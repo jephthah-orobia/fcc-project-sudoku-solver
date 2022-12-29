@@ -176,19 +176,23 @@ suite('Unit Tests', () => {
         function () {
             test('#10 valid puzzle string pass the solver.', function (done) {
                 for (let sample of valid)
-                    assert.doesNotThrow(() => solver.solve(sample[0]));
+                    assert.doesNotThrow(() => solver.solve(sample[0]),
+                        sample[0] + ' is solvable');
                 done();
             });
 
             test('#11 invalid puzzle strings fail the solver', function (done) {
-                for (let sample of [...invalid_chars, ...none81])
+                for (let sample of [...invalid_chars, ...none81, ...cannotBeSolved])
                     assert.Throw(() => solver.solve(sample));
                 done();
             });
 
             test('#12 Solver returns the expected solution for an incomplete puzzle', function (done) {
-                for (let sample of valid)
+                for (let sample of valid) {
+                    assert.doesNotThrow(() => solver.solve(sample[0]),
+                        sample[0] + ' is solvable');
                     assert.equal(solver.solve(sample[0]), sample[1]);
+                }
                 done();
             });
         });
