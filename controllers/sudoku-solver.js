@@ -102,8 +102,8 @@ class SudokuSolver {
 
   validateCheckArguments(str, r, c, v) {
     return this.validateString(str)
-      && this.validateRowCol(r) && this.validateRowCol(c)
-      && this.validateValue(v);
+      && this.validateValue(v)
+      && this.validateRowCol(r) && this.validateRowCol(c);
   }
 
   checkRowPlacement(puzzleString, row, column, value) {
