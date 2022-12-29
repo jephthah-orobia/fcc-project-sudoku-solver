@@ -4,31 +4,95 @@ const assert = chai.assert;
 
 const { setDebugging, log, logEr, logPropsOf } = require('../log-utils');
 const Solver = require('../controllers/sudoku-solver.js');
-const { valid, invalid_chars, none81 } = require('../controllers/puzzle-strings');
+const { valid, invalid_chars, none81, cannotBeSolved } = require('../controllers/puzzle-strings');
 
 setDebugging(process.env.DEBUG == 'yes');
 
 suite('Unit Tests', () => {
     let solver = new Solver();
+
+    suite('Test toRowCol Method', function () {
+        test('valid index', function (done) {
+            assert.deepEqual(solver.toRowCol(0), [0, 0]);
+            assert.deepEqual(solver.toRowCol(65), [7, 2]);
+            assert.deepEqual(solver.toRowCol(42), [4, 6]);
+            done();
+        });
+        test('invalid index', function (done) {
+            assert.throws(() => solver.toRowCol('A3'));
+            assert.throws(() => solver.toRowCol(null));
+            assert.throws(() => solver.toRowCol(-3));
+            assert.throws(() => solver.toRowCol(81));
+            done();
+        });
+    });
+
+    suite('Test toIndex Method', function () {
+        test('Test valid row col', function (done) {
+            assert.equal(solver.toIndex(0, 0), 0);
+            assert.equal(solver.toIndex(7, 2), 65);
+            assert.equal(solver.toIndex(4, 6), 42);
+            done();
+        });
+
+        test('Test invalid row col', function (done) {
+            assert.throws(() => solver.toIndex('A3', 'A3'));
+            assert.throws(() => solver.toIndex(null, null));
+            assert.throws(() => solver.toIndex(-1, -3));
+            assert.throws(() => solver.toIndex(-4, 9));
+            assert.throws(() => solver.toIndex(9, 10));
+            assert.throws(() => solver.toIndex(8, -1));
+            done();
+        });
+    });
+
+    suite('Test toCoordinate Method', function () {
+        test('Test valid inputs', function (done) {
+            assert.equal(solver.toCoordinate(0), 'A1');
+            assert.equal(solver.toCoordinate(65), 'H3');
+            assert.equal(solver.toCoordinate(42), 'E7');
+            assert.equal(solver.toCoordinate(...solver.toRowCol(0)), 'A1');
+            assert.equal(solver.toCoordinate(...solver.toRowCol(65)), 'H3');
+            assert.equal(solver.toCoordinate(...solver.toRowCol(42)), 'E7');
+            assert.equal(solver.toCoordinate(0, 0), 'A1');
+            assert.equal(solver.toCoordinate(7, 2), 'H3');
+            assert.equal(solver.toCoordinate(4, 6), 'E7');
+            done();
+        });
+        test('Test invalid inputs', function (done) {
+            assert.throws(() => solver.toCoordinate(-1, -3));
+            assert.throws(() => solver.toCoordinate(-4, 9));
+            assert.throws(() => solver.toCoordinate(9, 10));
+            assert.throws(() => solver.toCoordinate(8, -1));
+            assert.throws(() => solver.toCoordinate('A3'));
+            assert.throws(() => solver.toCoordinate(null));
+            assert.throws(() => solver.toCoordinate(-3));
+            assert.throws(() => solver.toCoordinate(81));
+            done();
+        });
+    });
+
     suite('Test validate method', function () {
-        test('#1 validite puzzle strings of 81 characters',
+        test('#1 validite a puzzle string of 81 characters',
             function (done) {
                 for (let sample of valid)
-                    assert.isTrue(solver.validate(sample[0]));
+                    assert.isTrue(solver.validate(sample[0]), "expected " + sample[0] + ' to be true');
+                for (let sample of cannotBeSolved)
+                    assert.isFalse(solver.validate(sample), "expected " + sample + ' to be FALSE');
                 done();
             });
 
-        test('#2 validite puzzle strings with some invalid characters.',
+        test('#2 validite a puzzle string with invalid characters (not 1-9 or .)',
             function (done) {
                 for (let sample of invalid_chars)
-                    assert.isFalse(solver.validate(sample));
+                    assert.throws(() => solver.validate(sample), "Invalid characters in puzzle");
                 done();
             });
 
         test('#3 validite puzzle strings that is not 81 characters long',
             function (done) {
                 for (let sample of none81)
-                    assert.isFalse(solver.validate(sample));
+                    assert.throws(() => solver.validate(sample), 'Expected puzzle to be 81 characters long');
                 done();
             });
     });
@@ -37,32 +101,49 @@ suite('Unit Tests', () => {
         function () {
             test('#4 check a valid row placement.', function (done) {
                 for (let sample of valid)
-                    for (let i in sample)
-                        assert.isTrue(solver.checkRowPlacement(sample[0], Math.floor(i / 9) + 1, (i % 9) + 1, sample[1][i]));
+                    for (let i in sample[0]) {
+                        const [row, col] = solver.toRowCol(parseInt(i));
+                        assert.isTrue(
+                            solver.checkRowPlacement(sample[0],
+                                row,
+                                col,
+                                sample[1][i]
+                            ), 'expected ' + sample[1][i] + ' in ' + 'ABCDEFGHI'[row] + (col + 1).toString() + ' of ' + sample[0] + ' to be valid');
+                    }
                 done();
             });
 
             test('#5 check an invalid row placement', function (done) {
-                assert.isFalse(solver.checkRowPlacement(valid[0][0], 1, 5, 2));
-                assert.isFalse(solver.checkRowPlacement(valid[0][0], 3, 7, 5));
-                assert.isFalse(solver.checkRowPlacement(valid[0][0], 9, 6, 7));
+                assert.isFalse(solver.checkRowPlacement(valid[0][0], 0, 4, '5'));
+                assert.isFalse(solver.checkRowPlacement(valid[0][0], 0, 4, '2'));
+                assert.isFalse(solver.checkRowPlacement(valid[0][0], 2, 6, '5'));
+                assert.isFalse(solver.checkRowPlacement(valid[0][0], 8, 5, '7'));
                 done();
             })
         });
 
     suite('Test checkColPlacement method',
         function () {
-            test('#6 check a valid column placement.', function (done) {
+            test('#6 check valid column placement', function (done) {
                 for (let sample of valid)
-                    for (let i in sample)
-                        assert.isTrue(solver.checkColPlacement(sample[0], Math.floor(i / 9) + 1, (i % 9) + 1, sample[1][i]));
+                    for (let i in sample[0]) {
+                        const [row, col] = solver.toRowCol(parseInt(i));
+                        assert.isTrue(
+                            solver.checkColPlacement(sample[0],
+                                row,
+                                col,
+                                sample[1][i]
+                            ), 'expected ' + sample[1][i] + ' in ' + 'ABCDEFGHI'[row] + (col + 1).toString() + ' of ' + sample[0] + ' to be valid');
+                    }
                 done();
             });
 
+
             test('#7 check an invalid column placement', function (done) {
-                assert.isFalse(solver.checkRowPlacement(valid[0][0], 1, 5, 3));
-                assert.isFalse(solver.checkRowPlacement(valid[0][0], 3, 7, 3));
-                assert.isFalse(solver.checkRowPlacement(valid[0][0], 9, 6, 8));
+                assert.isFalse(solver.checkColPlacement(valid[0][0], 0, 4, '5'));
+                assert.isFalse(solver.checkColPlacement(valid[0][0], 0, 4, '3'));
+                assert.isFalse(solver.checkColPlacement(valid[0][0], 2, 6, '3'));
+                assert.isFalse(solver.checkColPlacement(valid[0][0], 8, 5, '8'));
                 done();
             })
         });
@@ -71,15 +152,22 @@ suite('Unit Tests', () => {
         function () {
             test('#8 check a valid region placement.', function (done) {
                 for (let sample of valid)
-                    for (let i in sample)
-                        assert.isTrue(solver.checkRegionPlacement(sample[0], Math.floor(i / 9) + 1, (i % 9) + 1, sample[1][i]));
+                    for (let i in sample[0]) {
+                        const [row, col] = solver.toRowCol(parseInt(i));
+                        assert.isTrue(
+                            solver.checkRegionPlacement(sample[0],
+                                row,
+                                col,
+                                sample[1][i]
+                            ), 'expected ' + sample[1][i] + ' in ' + 'ABCDEFGHI'[row] + (col + 1).toString() + ' of ' + sample[0] + ' to be valid');
+                    }
                 done();
             });
 
             test('#9 check an invalid region placement', function (done) {
-                assert.isFalse(solver.checkRowPlacement(valid[0][0], 1, 5, 5));
-                assert.isFalse(solver.checkRowPlacement(valid[0][0], 3, 7, 4));
-                assert.isFalse(solver.checkRowPlacement(valid[0][0], 9, 6, 6));
+                assert.isFalse(solver.checkRegionPlacement(valid[0][0], 0, 4, '5'));
+                assert.isFalse(solver.checkRegionPlacement(valid[0][0], 2, 6, '4'));
+                assert.isFalse(solver.checkRegionPlacement(valid[0][0], 8, 5, '6'));
                 done();
             })
         });
