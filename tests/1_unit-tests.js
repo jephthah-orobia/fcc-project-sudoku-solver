@@ -46,6 +46,25 @@ suite('Unit Tests', () => {
         });
     });
 
+
+    suite('Test fromCoorToRC Method', function () {
+        test('Test valid inputs', function (done) {
+            assert.deepEqual(solver.fromCoordToRC('A1'), [0, 0]);
+            assert.deepEqual(solver.fromCoordToRC('A2'), [0, 1]);
+            assert.deepEqual(solver.fromCoordToRC('C2'), [2, 1]);
+            assert.deepEqual(solver.fromCoordToRC('D7'), [3, 6]);
+            assert.deepEqual(solver.fromCoordToRC('I4'), [8, 3]);
+            done();
+        });
+        test('Test invalid inputs', function (done) {
+            assert.throws(() => solver.fromCoordToRC('A12'), 'Invalid coordinate');
+            assert.throws(() => solver.fromCoordToRC('Z3'), 'Invalid coordinate');
+            assert.throws(() => solver.fromCoordToRC('V14'), 'Invalid coordinate');
+            assert.throws(() => solver.fromCoordToRC('sdfag'), 'Invalid coordinate');
+            done();
+        })
+    });
+
     suite('Test toCoordinate Method', function () {
         test('Test valid inputs', function (done) {
             assert.equal(solver.toCoordinate(0), 'A1');

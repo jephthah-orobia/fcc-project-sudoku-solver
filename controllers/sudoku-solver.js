@@ -1,5 +1,5 @@
-const puzzleStrings = require("./puzzle-strings");
-
+const validROW = 'ABCDEFGHI',
+  validCOL = '123456789';
 class SudokuSolver {
   /**
    * Convert an index into [row,col]
@@ -27,6 +27,11 @@ class SudokuSolver {
     throw new Error("invalid row X col");
   };
 
+  fromCoordToRC(coord) {
+    if (!coord || coord.length != 2 || !validROW.includes(coord[0]) || !validCOL.includes(coord[1]))
+      throw Error("Invalid coordinate");
+    return [validROW.indexOf(coord[0]), validCOL.indexOf(coord[1])];
+  };
   /**
    * 
    * @param {Number} row index or could be the row if col is defined
@@ -36,10 +41,10 @@ class SudokuSolver {
   toCoordinate(a = null, b = null) {
     if (a != null && b == null) {
       const [row, col] = this.toRowCol(a);
-      return 'ABCDEFGHI'[row] + (col + 1).toString();
+      return validROW[row] + validCOL[col];
     } else if (a != null && b != null && Number.isInteger(a) && a >= 0 && a < 9
       && Number.isInteger(b) && b >= 0 && b < 9)
-      return 'ABCDEFGHI'[a] + (b + 1).toString();
+      return validROW[a] + validCOL[b];
     if (a == null && b != null) throw Error("invalid row");
     if (a == null && b == null) throw Error("invalid index");
     throw Error('invalid row column');
