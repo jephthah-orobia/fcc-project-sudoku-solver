@@ -133,12 +133,11 @@ suite('Functional Tests', () => {
     const failKey = ['valid', 'conflict'];
 
     suite('route test: POST request to /api/check',
-    
         function () {
 
             suite('#18 Check a puzzle placement with all fields',
                 function () {
-                    test('A4 = 7 on valid.0.0', function () {
+                    test('A4 = 7 on valid.0.0', function (done) {
                         chai.request(server)
                             .post('/api/check')
                             .send({
@@ -154,7 +153,7 @@ suite('Functional Tests', () => {
                             });
                     });
 
-                    test('E3 = 2 on valid.3.0', function () {
+                    test('E3 = 2 on valid.3.0', function (done) {
                         chai.request(server)
                             .post('/api/check')
                             .send({
@@ -173,7 +172,7 @@ suite('Functional Tests', () => {
 
             suite('#19 Check a puzzle placement with single placement conflict',
                 function () {
-                    test('G9 = 2 on valid.1.0', function () {
+                    test('G9 = 2 on valid.1.0', function (done) {
                         chai.request(server)
                             .post('/api/check')
                             .send({
@@ -190,7 +189,7 @@ suite('Functional Tests', () => {
                             });
                     });
 
-                    test('C6 = 9 on valid.2.0', function () {
+                    test('C6 = 9 on valid.2.0', function (done) {
                         chai.request(server)
                             .post('/api/check')
                             .send({
@@ -207,7 +206,7 @@ suite('Functional Tests', () => {
                             });
                     });
 
-                    test('A1 = 6 on valid.2.0', function () {
+                    test('A1 = 6 on valid.2.0', function (done) {
                         chai.request(server)
                             .post('/api/check')
                             .send({
@@ -227,7 +226,7 @@ suite('Functional Tests', () => {
 
             suite('#20 Check a puzzle placement with multiple placement conflicts',
                 function () {
-                    test('I3 = 9 on valid.4.0', function () {
+                    test('I3 = 9 on valid.4.0', function (done) {
                         chai.request(server)
                             .post('/api/check')
                             .send({
