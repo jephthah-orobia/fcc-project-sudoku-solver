@@ -29,7 +29,7 @@ class SudokuSolver {
 
   fromCoordToRC(coord) {
     if (!coord || coord.length != 2 || !validROW.includes(coord[0]) || !validCOL.includes(coord[1]))
-      throw Error("Invalid coordinate");
+      throw "Invalid coordinate";
     return [validROW.indexOf(coord[0]), validCOL.indexOf(coord[1])];
   };
   /**
@@ -78,8 +78,8 @@ class SudokuSolver {
   noDuplicateIn(puzzleString, row, column, value, sieve) {
     const index = this.toIndex(row, column);
     // if the position on the puzzleString is not vacant and value is not in that position.
-    if (puzzleString[index] != '.' && puzzleString[index] != value)
-      return false;
+    //if (puzzleString[index] != '.' && puzzleString[index] != value)
+    //  return false;
 
     // acquire the all elements that the `value` will be check against.
     let toInspect = puzzleString.split('')
@@ -101,7 +101,7 @@ class SudokuSolver {
 
   validateValue(c) {
     if (!'123456789'.includes(c))
-      throw Error("Invalid value");
+      throw 'Invalid value';
     return true;
   }
 
@@ -175,7 +175,7 @@ class SudokuSolver {
       if (!/\./.test(newPuzzleString))
         return newPuzzleString;
       if (toSolve === newPuzzleString)
-        throw Error("Puzzle cannot be solved");
+        throw "Puzzle cannot be solved";
       return solveNoValidation(newPuzzleString);
     }
 
