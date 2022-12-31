@@ -17,7 +17,7 @@ suite('Functional Tests', () => {
     const noSutionE = 'Puzzle cannot be solved';
     const noPuzzleE = 'Required field missing';
 
-    suite('router tests: POST request to /api/solve',
+    suite('route tests: POST request to /api/solve',
         function () {
 
             suite('#13 Solve a puzzle with valid puzzle string',
@@ -120,6 +120,7 @@ suite('Functional Tests', () => {
                         })
 
                 });
+
         });
 
     /* Error messages for POST request to /api/check */
@@ -131,9 +132,10 @@ suite('Functional Tests', () => {
     const successKey = ['valid'];
     const failKey = ['valid', 'conflict'];
 
-    suite('router test: POST request to /api/check',
+    suite('route test: POST request to /api/check',
+    
         function () {
-            
+
             suite('#18 Check a puzzle placement with all fields',
                 function () {
                     test('A4 = 7 on valid.0.0', function () {
@@ -151,6 +153,7 @@ suite('Functional Tests', () => {
                                 done();
                             });
                     });
+
                     test('E3 = 2 on valid.3.0', function () {
                         chai.request(server)
                             .post('/api/check')
