@@ -151,7 +151,7 @@ class SudokuSolver {
 
   solve(puzzleString) {
     if (!this.validate(puzzleString))
-      throw "Puzzle connot be solved";
+      throw "Puzzle cannot be solved";
 
     const solveNoValidation = (toSolve) => {
       const chars = toSolve.split('');
@@ -175,7 +175,7 @@ class SudokuSolver {
       if (!/\./.test(newPuzzleString))
         return newPuzzleString;
       if (toSolve === newPuzzleString)
-        throw Error("Puzzle connot be solved");
+        throw Error("Puzzle cannot be solved");
       return solveNoValidation(newPuzzleString);
     }
 
