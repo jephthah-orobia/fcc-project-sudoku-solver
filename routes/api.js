@@ -30,8 +30,8 @@ module.exports = function (app) {
           const conflict = [];
           const [r, c] = solver.fromCoordToRC(coordinate);
           !solver.checkRowPlacement(puzzle, r, c, value) && conflict.push('row');
-          !solver.checkColPlacement(puzzle, r, c, value) && conflict.push('column');
-          !solver.checkRegionPlacement(puzzle, r, c, value) && conflict.push('region');
+          !solver.checkColNoValidation(puzzle, r, c, value) && conflict.push('column');
+          !solver.checkRegionNoValidation(puzzle, r, c, value) && conflict.push('region');
 
           if (conflict.length > 0)
             res.json({ valid: false, conflict })
