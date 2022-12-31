@@ -251,8 +251,8 @@ suite('Functional Tests', () => {
                             .post('/api/check')
                             .send({
                                 puzzle: valid[4][0],
-                                coordinate: 'I3',
-                                value: '9'
+                                coordinate: 'B1',
+                                value: '1'
                             }).end((err, res) => {
                                 assert.equal(res.status, 200);
                                 assert.isObject(res.body);
