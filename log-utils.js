@@ -107,7 +107,6 @@ function logRes(req, res, next) {
         log('* * * * * * * * * * * * * * * * * * * * * * * * * * * *');
         res.removeListener('finish', onFinish);
         res.removeListener('close', onFinish);
-        next();
     }
 
     res.on('finish', onFinish);
