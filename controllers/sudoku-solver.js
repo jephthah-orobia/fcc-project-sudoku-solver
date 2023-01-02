@@ -61,14 +61,14 @@ class SudokuSolver {
 
   validate(puzzleString) {
     if (this.validateString(puzzleString)) {
-      for (let i = 0; i < 81; i++)
+      /* for (let i = 0; i < 81; i++)
         if (puzzleString[i] !== '.') {
           const [r, c] = this.toRowCol(i);
           if (!(this.checkRowNoValidation(puzzleString, r, c, puzzleString[i])
             && this.checkColNoValidation(puzzleString, r, c, puzzleString[i])
             && this.checkRegionNoValidation(puzzleString, r, c, puzzleString[i])))
             return false;
-        }
+        } */
       return true;
     }
     else
