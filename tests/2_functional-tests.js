@@ -6,7 +6,7 @@ const { valid, invalid_chars, none81, cannotBeSolved } = require('../controllers
 const { setDebugging, log, logEr, logPropsOf } = require('../log-utils');
 
 chai.use(chaiHttp);
-
+setDebugging(false);
 suite('Functional Tests', () => {
     const solutionKey = ['solution'];
     const errorKey = ['error'];
@@ -405,6 +405,5 @@ suite('Functional Tests', () => {
 
 
         });
-
 });
 
