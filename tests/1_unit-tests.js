@@ -104,6 +104,10 @@ suite('Unit Tests', () => {
                     assert.isTrue(solver.validate(sample[0]), "expected " + sample[0] + ' to be true');
                     if (!isLocal) break;
                 }
+                for (let sample of cannotBeSolved) {
+                    assert.isFalse(solver.validate(sample), "expected " + sample + ' to be FALSE');
+                    if (!isLocal) break;
+                }
                 done();
             });
 
