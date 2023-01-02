@@ -6,7 +6,8 @@ const { valid, invalid_chars, none81, cannotBeSolved } = require('../controllers
 const { setDebugging, log, logEr, logPropsOf } = require('../log-utils');
 
 chai.use(chaiHttp);
-setDebugging(false);
+const isLocal = process.env.NODE_ENV == 'local';
+setDebugging(isLocal);
 suite('Functional Tests', () => {
     const solutionKey = ['solution'];
     const errorKey = ['error'];
@@ -22,7 +23,7 @@ suite('Functional Tests', () => {
 
             suite('#13 Solve a puzzle with valid puzzle string',
                 function () {
-                    for (let sample of valid)
+                    for (let sample of valid) {
                         test(sample[0], function (done) {
                             chai.request(server)
                                 .post('/api/solve')
@@ -37,6 +38,8 @@ suite('Functional Tests', () => {
                                     done();
                                 });
                         });
+                        if (!isLocal) break;
+                    }
                 });
 
             suite('#14 Solve a puzzle with missing puzzle string',
@@ -70,8 +73,8 @@ suite('Functional Tests', () => {
                 });
 
             suite('#15 Solve a puzzle with invalid characters',
-                function (done) {
-                    for (let sample of invalid_chars)
+                function () {
+                    for (let sample of invalid_chars) {
                         test(sample, function (done) {
                             chai.request(server)
                                 .post('/api/solve')
@@ -84,11 +87,13 @@ suite('Functional Tests', () => {
                                     done();
                                 });
                         });
+                        if (!isLocal) break;
+                    }
                 });
 
             suite('#16 Solve a puzzle with incorrect length',
                 function () {
-                    for (let sample of none81)
+                    for (let sample of none81) {
                         test(sample, function (done) {
                             chai.request(server)
                                 .post('/api/solve')
@@ -101,11 +106,13 @@ suite('Functional Tests', () => {
                                     done();
                                 });
                         });
+                        if (!isLocal) break;
+                    }
                 });
 
             suite('#17 Solve a puzzle that cannot be solved',
                 function () {
-                    for (let sample of cannotBeSolved)
+                    for (let sample of cannotBeSolved) {
                         test(sample, function (done) {
                             chai.request(server)
                                 .post('/api/solve')
@@ -119,6 +126,8 @@ suite('Functional Tests', () => {
                                 });
                         })
 
+                        if (!isLocal) break;
+                    }
                 });
 
         });
@@ -327,7 +336,7 @@ suite('Functional Tests', () => {
 
             suite('#23 Check a puzzle placement with invalid characters',
                 function () {
-                    for (let sample of invalid_chars)
+                    for (let sample of invalid_chars) {
                         test(sample, function (done) {
                             chai.request(server)
                                 .post('/api/check')
@@ -343,11 +352,13 @@ suite('Functional Tests', () => {
                                     done();
                                 });
                         });
+                        if (!isLocal) break;
+                    }
                 });
 
             suite('#24 Check a puzzle placement with incorrect length',
                 function () {
-                    for (let sample of none81)
+                    for (let sample of none81) {
                         test(sample, function (done) {
                             chai.request(server)
                                 .post('/api/check')
@@ -363,6 +374,9 @@ suite('Functional Tests', () => {
                                     done();
                                 });
                         });
+                        if (!isLocal) break;
+                    }
+
                 });
 
             suite('#25 Check a puzzle placement with invalid placement coordinate',
