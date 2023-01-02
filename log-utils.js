@@ -91,16 +91,18 @@ function logReq({ declare = true, body = false, query = false, params = false, r
 function logRes(req, res, next) {
     const sendInterceptor = (res, send) => (content) => {
         res.content = content;
-        res.send = send;
-        res.send(content);
+        send.apply(res, [content]);
     };
 
     res.send = sendInterceptor(res, res.send);
 
-    const onFinish = (data) => {
+    const onFinish = () => {
         log("<< RESPONSE: ");
         console.group();
-        log(res.content);
+        if (res.get('content-type').split('; ')[0] == 'application/json')
+            logPropsOf('json object:', JSON.parse(res.content));
+        else
+            log(res.content);
         console.groupEnd();
         log('* * * * * * * * * * * * * * * * * * * * * * * * * * * *');
         res.removeListener('finish', onFinish);
