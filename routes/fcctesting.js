@@ -30,9 +30,11 @@
 const cors = require('cors');
 const fs = require('fs');
 const runner = require('../test-runner');
-const { logReq, logRes } = require('../log-utils');
+const { setDebugging, logReq, logRes } = require('../log-utils');
 
 module.exports = function (app) {
+
+  setDebugging(process.env.LOG_FCCTEST == 'yes');
 
   app.route('/_api/server.js')
     .get(function (req, res, next) {
