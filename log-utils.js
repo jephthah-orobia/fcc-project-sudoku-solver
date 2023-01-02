@@ -99,10 +99,14 @@ function logRes(req, res, next) {
     const onFinish = () => {
         log("<< RESPONSE: ");
         console.group();
-        if (res.get('content-type').split('; ')[0] == 'application/json')
-            logPropsOf('json object:', JSON.parse(res.content));
-        else
+        try {
+            if (res.get('content-type').split('; ')[0] == 'application/json')
+                logPropsOf('json object:', JSON.parse(res.content));
+            else
+                log(res.content);
+        } catch (e) {
             log(res.content);
+        }
         console.groupEnd();
         log('* * * * * * * * * * * * * * * * * * * * * * * * * * * *');
         res.removeListener('finish', onFinish);
