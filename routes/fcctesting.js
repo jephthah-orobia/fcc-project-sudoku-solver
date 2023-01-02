@@ -60,12 +60,17 @@ module.exports = function (app) {
 
   app.get('/_api/get-tests', cors(), function (req, res, next) {
     console.log('requested');
+    console.log('current runner.isRunning', runner.isRunning);
+    console.log('current runner.report', runner.report);
     // process.env.NODE_ENV='test'
     if (process.env.NODE_ENV === 'test') {
-      if (runner.report)
+      if (runner.report) {
+        console.log('runner already run once');
         res.json(testFilter(runner.report, req.query.type, req.query.n));
-      else if (runner.isRunning)
+      } else if (runner.isRunning) {
+        console.log('runner is currently running, wait for result');
         return next();
+      }
       else {
         console.log('Running Tests...');
         try {
@@ -81,7 +86,10 @@ module.exports = function (app) {
     else
       res.json({ status: 'unavailable' });
   }, function (req, res) {
+    console.log('set to wait when runner is done');
     runner.on('done', function (report) {
+      console.log('done! for', req.query.type);
+      console.log('query.n:', req.query.n);
       process.nextTick(() => res.json(testFilter(runner.report, req.query.type, req.query.n)));
     });
   });
