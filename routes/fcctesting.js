@@ -90,7 +90,7 @@ module.exports = function (app) {
     runner.on('done', function (report) {
       console.log('done! for', req.query.type);
       console.log('query.n:', req.query.n);
-      process.nextTick(() => res.json(testFilter(runner.report, req.query.type, req.query.n)));
+      res.json(testFilter(runner.report, req.query.type, req.query.n));
     });
   });
   app.get('/_api/app-info', function (req, res) {
