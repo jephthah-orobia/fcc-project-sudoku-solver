@@ -137,11 +137,9 @@ suite('Unit Tests', () => {
 
             test('#5 check an invalid row placement', function (done) {
                 assert.isFalse(solver.checkRowPlacement(valid[0][0], 0, 4, '5'));
-                if (isLocal) {
-                    assert.isFalse(solver.checkRowPlacement(valid[0][0], 0, 4, '2'));
-                    assert.isFalse(solver.checkRowPlacement(valid[0][0], 2, 6, '5'));
-                    assert.isFalse(solver.checkRowPlacement(valid[0][0], 8, 5, '7'));
-                }
+                assert.isFalse(solver.checkRowPlacement(valid[0][0], 0, 4, '2'));
+                assert.isFalse(solver.checkRowPlacement(valid[0][0], 2, 6, '5'));
+                assert.isFalse(solver.checkRowPlacement(valid[0][0], 8, 5, '7'));
                 done();
             })
 
@@ -167,11 +165,9 @@ suite('Unit Tests', () => {
 
             test('#7 check an invalid column placement', function (done) {
                 assert.isFalse(solver.checkColPlacement(valid[0][0], 0, 4, '5'));
-                if (!isLocal) return done();
                 assert.isFalse(solver.checkColPlacement(valid[0][0], 0, 4, '3'));
                 assert.isFalse(solver.checkColPlacement(valid[0][0], 2, 6, '3'));
                 assert.isFalse(solver.checkColPlacement(valid[0][0], 8, 5, '8'));
-                done();
             })
         });
 
@@ -194,10 +190,8 @@ suite('Unit Tests', () => {
 
             test('#9 check an invalid region placement', function (done) {
                 assert.isFalse(solver.checkRegionPlacement(valid[0][0], 0, 4, '5'));
-                if (!isLocal) return done();
                 assert.isFalse(solver.checkRegionPlacement(valid[0][0], 2, 6, '4'));
                 assert.isFalse(solver.checkRegionPlacement(valid[0][0], 8, 5, '6'));
-                done();
             })
         });
 
