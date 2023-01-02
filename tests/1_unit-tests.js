@@ -9,9 +9,12 @@ const { valid, invalid_chars, none81, cannotBeSolved } = require('../controllers
 const logTest = process.env.LOG_TEST == 'yes';
 setDebugging(logTest);
 
+const isLocal = process.env.NODE_ENV == 'local';
+
+
 suite('Unit Tests', () => {
     let solver = new Solver();
-    if (logTest) {
+    if (isLocal) {
 
         suite('Test toRowCol Method', function () {
             test('valid index', function (done) {
@@ -99,11 +102,11 @@ suite('Unit Tests', () => {
             function (done) {
                 for (let sample of valid) {
                     assert.isTrue(solver.validate(sample[0]), "expected " + sample[0] + ' to be true');
-                    if (!logTest) break;
+                    if (!isLocal) break;
                 }
                 for (let sample of cannotBeSolved) {
                     assert.isFalse(solver.validate(sample), "expected " + sample + ' to be FALSE');
-                    if (!logTest) break;
+                    if (!isLocal) break;
                 }
                 done();
             });
@@ -112,7 +115,7 @@ suite('Unit Tests', () => {
             function (done) {
                 for (let sample of invalid_chars) {
                     assert.throws(() => solver.validate(sample), "Invalid characters in puzzle");
-                    if (!logTest) break;
+                    if (!isLocal) break;
                 }
                 done();
             });
@@ -121,7 +124,7 @@ suite('Unit Tests', () => {
             function (done) {
                 for (let sample of none81) {
                     assert.throws(() => solver.validate(sample), 'Expected puzzle to be 81 characters long');
-                    if (!logTest) break;
+                    if (!isLocal) break;
                 }
                 done();
             });
@@ -140,14 +143,14 @@ suite('Unit Tests', () => {
                                 sample[1][i]
                             ), 'expected ' + sample[1][i] + ' in ' + 'ABCDEFGHI'[row] + (col + 1).toString() + ' of ' + sample[0] + ' to be valid');
                     }
-                    if (!logTest) break;
+                    if (!isLocal) break;
                 }
                 done();
             });
 
             test('#5 check an invalid row placement', function (done) {
                 assert.isFalse(solver.checkRowPlacement(valid[0][0], 0, 4, '5'));
-                if (logTest) {
+                if (isLocal) {
                     assert.isFalse(solver.checkRowPlacement(valid[0][0], 0, 4, '2'));
                     assert.isFalse(solver.checkRowPlacement(valid[0][0], 2, 6, '5'));
                     assert.isFalse(solver.checkRowPlacement(valid[0][0], 8, 5, '7'));
@@ -170,7 +173,7 @@ suite('Unit Tests', () => {
                                 sample[1][i]
                             ), 'expected ' + sample[1][i] + ' in ' + 'ABCDEFGHI'[row] + (col + 1).toString() + ' of ' + sample[0] + ' to be valid');
                     }
-                    if (!logTest) break;
+                    if (!isLocal) break;
                 }
                 done();
             });
@@ -178,7 +181,7 @@ suite('Unit Tests', () => {
 
             test('#7 check an invalid column placement', function (done) {
                 assert.isFalse(solver.checkColPlacement(valid[0][0], 0, 4, '5'));
-                if (!logTest) return done();
+                if (!isLocal) return done();
                 assert.isFalse(solver.checkColPlacement(valid[0][0], 0, 4, '3'));
                 assert.isFalse(solver.checkColPlacement(valid[0][0], 2, 6, '3'));
                 assert.isFalse(solver.checkColPlacement(valid[0][0], 8, 5, '8'));
@@ -199,14 +202,14 @@ suite('Unit Tests', () => {
                                 sample[1][i]
                             ), 'expected ' + sample[1][i] + ' in ' + 'ABCDEFGHI'[row] + (col + 1).toString() + ' of ' + sample[0] + ' to be valid');
                     }
-                    if (!logTest) break;
+                    if (!isLocal) break;
                 }
                 done();
             });
 
             test('#9 check an invalid region placement', function (done) {
                 assert.isFalse(solver.checkRegionPlacement(valid[0][0], 0, 4, '5'));
-                if (!logTest) return done();
+                if (!isLocal) return done();
                 assert.isFalse(solver.checkRegionPlacement(valid[0][0], 2, 6, '4'));
                 assert.isFalse(solver.checkRegionPlacement(valid[0][0], 8, 5, '6'));
                 done();
@@ -219,7 +222,7 @@ suite('Unit Tests', () => {
                 for (let sample of valid) {
                     assert.doesNotThrow(() => solver.solve(sample[0]),
                         sample[0] + ' is solvable');
-                    if (!logTest) break;
+                    if (!isLocal) break;
                 }
                 done();
             });
@@ -227,7 +230,7 @@ suite('Unit Tests', () => {
             test('#11 invalid puzzle strings fail the solver', function (done) {
                 for (let sample of [...invalid_chars, ...none81, ...cannotBeSolved]) {
                     assert.Throw(() => solver.solve(sample));
-                    if (!logTest) break;
+                    if (!isLocal) break;
                 }
                 done();
             });
@@ -237,7 +240,7 @@ suite('Unit Tests', () => {
                     assert.doesNotThrow(() => solver.solve(sample[0]),
                         sample[0] + ' is solvable');
                     assert.equal(solver.solve(sample[0]), sample[1]);
-                    if (!logTest) break;
+                    if (!isLocal) break;
                 }
                 done();
             });

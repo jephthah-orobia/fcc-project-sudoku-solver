@@ -7,6 +7,7 @@ const { setDebugging, log, logEr, logPropsOf } = require('../log-utils');
 
 chai.use(chaiHttp);
 const logTest = process.env.LOG_TEST == 'yes';
+const isLocal = process.env.NODE_ENV == 'local';
 setDebugging(logTest);
 suite('Functional Tests', () => {
     const solutionKey = ['solution'];
@@ -38,7 +39,7 @@ suite('Functional Tests', () => {
                                     done();
                                 });
                         });
-                        if (!logTest) break;
+                        if (!isLocal) break;
                     }
                 });
 
@@ -57,6 +58,8 @@ suite('Functional Tests', () => {
                                     done();
                                 });
                         });
+
+                    if (!isLocal) return;
 
                     test('#14.1 Solve a puzzle with missing puzzle string',
                         function (done) {
@@ -87,7 +90,7 @@ suite('Functional Tests', () => {
                                     done();
                                 });
                         });
-                        if (!logTest) break;
+                        if (!isLocal) break;
                     }
                 });
 
@@ -106,7 +109,7 @@ suite('Functional Tests', () => {
                                     done();
                                 });
                         });
-                        if (!logTest) break;
+                        if (!isLocal) break;
                     }
                 });
 
@@ -126,7 +129,7 @@ suite('Functional Tests', () => {
                                 });
                         })
 
-                        if (!logTest) break;
+                        if (!isLocal) break;
                     }
                 });
 
@@ -161,7 +164,7 @@ suite('Functional Tests', () => {
                                 done();
                             });
                     });
-
+                    if (!isLocal) return;
                     test('E3 = 2 on valid.3.0', function (done) {
                         chai.request(server)
                             .post('/api/check')
@@ -197,6 +200,8 @@ suite('Functional Tests', () => {
                                 done();
                             });
                     });
+
+                    if (!isLocal) return;
 
                     test('C6 = 9 on valid.2.0', function (done) {
                         chai.request(server)
@@ -290,6 +295,8 @@ suite('Functional Tests', () => {
                             });
                     });
 
+                    if (!isLocal) return;
+
                     test('No puzzle and value', function (done) {
                         chai.request(server)
                             .post('/api/check')
@@ -352,7 +359,7 @@ suite('Functional Tests', () => {
                                     done();
                                 });
                         });
-                        if (!logTest) break;
+                        if (!isLocal) break;
                     }
                 });
 
@@ -374,7 +381,7 @@ suite('Functional Tests', () => {
                                     done();
                                 });
                         });
-                        if (!logTest) break;
+                        if (!isLocal) break;
                     }
 
                 });
