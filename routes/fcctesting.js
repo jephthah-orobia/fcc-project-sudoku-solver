@@ -37,82 +37,61 @@ module.exports = function (app) {
   setDebugging(process.env.LOG_FCCTEST == 'yes');
 
   app.route('/_api/server.js')
-    .get(function (req, res, next) {
+    .get(function(req, res, next) {
       console.log('requested');
-      fs.readFile(__dirname + '/server.js', function (err, data) {
-        if (err) return next(err);
+      fs.readFile(__dirname + '/server.js', function(err, data) {
+        if(err) return next(err);
         res.send(data.toString());
       });
     });
 
   app.route('/_api/routes/api.js')
-    .get(function (req, res, next) {
+    .get(function(req, res, next) {
       console.log('requested');
-      fs.readFile(__dirname + '/routes/api.js', function (err, data) {
-        if (err) return next(err);
+      fs.readFile(__dirname + '/routes/api.js', function(err, data) {
+        if(err) return next(err);
         res.type('txt').send(data.toString());
       });
     });
 
   app.route('/_api/controllers/convertHandler.js')
-    .get(function (req, res, next) {
+    .get(function(req, res, next) {
       console.log('requested');
-      fs.readFile(__dirname + '/controllers/convertHandler.js', function (err, data) {
-        if (err) return next(err);
+      fs.readFile(__dirname + '/controllers/convertHandler.js', function(err, data) {
+        if(err) return next(err);
         res.type('txt').send(data.toString());
       });
     });
 
-  app.get('/_api/get-tests', cors(), logReq({ query: true, body: true, params: false }), logRes, function (req, res, next) {
+  app.get('/_api/get-tests', cors(), function(req, res, next){
     console.log('requested');
-    console.log('current runner.isRunning', runner.isRunning);
-    console.log('current runner.report', runner.report);
-    // process.env.NODE_ENV='test'
-    if (process.env.NODE_ENV === 'test') {
-      if (runner.report) {
-        console.log('runner already run once');
-        res.json(testFilter(runner.report, req.query.type, req.query.n));
-      } else if (runner.isRunning) {
-        console.log('runner is currently running, wait for result');
-        return next();
-      }
-      else {
-        console.log('Running Tests...');
-        try {
-          runner.run();
-          return next();
-        } catch (error) {
-          console.log('Tests are not valid:');
-          console.error(error);
-          res.json({ status: 'unavailable' });
-        }
-      }
-    }
-    else
-      res.json({ status: 'unavailable' });
-  }, function (req, res) {
-    console.log('set to wait when runner is done');
-    runner.on('done', function (report) {
-      console.log('done! for', req.query.type);
-      console.log('query.n:', req.query.n);
-      res.json(testFilter(runner.report, req.query.type, req.query.n));
+    if(process.env.NODE_ENV === 'test') return next();
+    res.json({status: 'unavailable'});
+  },
+  function(req, res, next){
+    if(!runner.report) return next();
+    res.json(testFilter(runner.report, req.query.type, req.query.n));
+  },
+  function(req, res){
+    runner.on('done', function(report){
+      process.nextTick(() =>  res.json(testFilter(runner.report, req.query.type, req.query.n)));
     });
   });
-  app.get('/_api/app-info', function (req, res) {
+  app.get('/_api/app-info', function(req, res) {
     let hs = Object.keys(res._headers)
       .filter(h => !h.match(/^access-control-\w+/));
     let hObj = {};
-    hs.forEach(h => { hObj[h] = res._headers[h] });
+    hs.forEach(h => {hObj[h] = res._headers[h]});
     delete res._headers['strict-transport-security'];
-    res.json({ headers: hObj });
+    res.json({headers: hObj});
   });
-
+  
 };
 
 function testFilter(tests, type, n) {
   let out;
   switch (type) {
-    case 'unit':
+    case 'unit' :
       out = tests.filter(t => t.context.match('Unit Tests'));
       break;
     case 'functional':
@@ -121,7 +100,7 @@ function testFilter(tests, type, n) {
     default:
       out = tests;
   }
-  if (n !== undefined) {
+  if(n !== undefined) {
     return out[n] || out;
   }
   return out;
