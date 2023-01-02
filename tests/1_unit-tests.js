@@ -168,6 +168,7 @@ suite('Unit Tests', () => {
                 assert.isFalse(solver.checkColPlacement(valid[0][0], 0, 4, '3'));
                 assert.isFalse(solver.checkColPlacement(valid[0][0], 2, 6, '3'));
                 assert.isFalse(solver.checkColPlacement(valid[0][0], 8, 5, '8'));
+                done();
             })
         });
 
@@ -192,6 +193,7 @@ suite('Unit Tests', () => {
                 assert.isFalse(solver.checkRegionPlacement(valid[0][0], 0, 4, '5'));
                 assert.isFalse(solver.checkRegionPlacement(valid[0][0], 2, 6, '4'));
                 assert.isFalse(solver.checkRegionPlacement(valid[0][0], 8, 5, '6'));
+                done();
             })
         });
 
