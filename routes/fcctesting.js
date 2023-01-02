@@ -58,31 +58,28 @@ module.exports = function (app) {
       });
     });
 
-  app.get('/_api/get-tests', cors(), function (req, res, next) {
+  app.get('/_api/get-tests', cors(), function (req, res) {
     console.log('requested');
     // process.env.NODE_ENV='test'
     if (process.env.NODE_ENV === 'test') {
-      console.log('Running Tests...');
-      try {
-        runner.run();
-      } catch (error) {
-        console.log('Tests are not valid:');
-        console.error(error);
-      } finally {
-        return next();
+      if (runner.report)
+        res.json(testFilter(runner.report, req.query.type, req.query.n));
+      else {
+        console.log('Running Tests...');
+        try {
+          runner.run();
+          runner.on('done', function (report) {
+            process.nextTick(() => res.json(testFilter(runner.report, req.query.type, req.query.n)));
+          });
+        } catch (error) {
+          console.log('Tests are not valid:');
+          console.error(error);
+          res.json({ status: 'unavailable' });
+        }
       }
     }
     res.json({ status: 'unavailable' });
-  },
-    function (req, res, next) {
-      if (!runner.report) return next();
-      res.json(testFilter(runner.report, req.query.type, req.query.n));
-    },
-    function (req, res) {
-      runner.on('done', function (report) {
-        process.nextTick(() => res.json(testFilter(runner.report, req.query.type, req.query.n)));
-      });
-    });
+  });
   app.get('/_api/app-info', function (req, res) {
     let hs = Object.keys(res._headers)
       .filter(h => !h.match(/^access-control-\w+/));
