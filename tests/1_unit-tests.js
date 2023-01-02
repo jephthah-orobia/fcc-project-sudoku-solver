@@ -3,7 +3,7 @@ const chai = require('chai');
 const assert = chai.assert;
 
 const Solver = require('../controllers/sudoku-solver.js');
-const { valid, invalid_chars, none81, cannotBeSolved } = require('../controllers/puzzle-strings');
+const { valid, invalid_chars, none81, cannotBeSolved, challenge } = require('../controllers/puzzle-strings');
 
 
 
@@ -220,6 +220,12 @@ suite('Unit Tests', () => {
                         sample[0] + ' is solvable');
                     assert.equal(solver.solve(sample[0]), sample[1]);
                 }
+                done();
+            });
+
+            test('Challenge! an evil puzzle but is solvable!', function (done) {
+                for (let sample of challenge)
+                    assert.doesNotThrow(() => solver.solve(sample));
                 done();
             });
         });
