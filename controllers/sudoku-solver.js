@@ -75,6 +75,15 @@ class SudokuSolver {
       return false;
   }
 
+
+  checkUnique(value, others) {
+    for (let other of others) {
+      if (other == value)
+        return false;
+    }
+    return true;
+  }
+
   noDuplicateIn(puzzleString, row, column, value, sieve) {
     const index = this.toIndex(row, column);
     // if the position on the puzzleString is not vacant and value is not in that position.
@@ -85,12 +94,7 @@ class SudokuSolver {
     let toInspect = puzzleString.split('')
       .filter((e, i) => e != '.' && i != index && sieve(i));
 
-    for (let other of toInspect) {
-      if (other == value)
-        return false;
-    }
-
-    return true;
+    return this.checkUnique(value, toInspect);
   }
 
   validateRowCol(n) {
@@ -136,17 +140,18 @@ class SudokuSolver {
       && this.checkRegionNoValidation(puzzleString, row, column, value);
   }
 
-  checkRegionNoValidation(puzzleString, row, column, value) {
+
+  checkIfPartOfRegion(i, row, col) {
     const r0 = Math.floor(row / 3) * 3,
       rf = r0 + 3,
       c0 = Math.floor(column / 3) * 3,
       cf = c0 + 3;
-    return this.noDuplicateIn(puzzleString, row, column, value,
-      (i) => {
-        const [r, c] = this.toRowCol(i);
-        return r >= r0 && r < rf && c >= c0 && c < cf;
-      }
-    );
+    const [r, c] = this.toRowCol(i);
+    return r >= r0 && r < rf && c >= c0 && c < cf
+  }
+
+  checkRegionNoValidation(puzzleString, row, column, value) {
+    return this.noDuplicateIn(puzzleString, row, column, value, i => this.checkIfPartOfRegion(i, row, column));
   }
 
   solve(puzzleString) {
