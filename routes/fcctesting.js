@@ -30,6 +30,7 @@
 const cors = require('cors');
 const fs = require('fs');
 const runner = require('../test-runner');
+const { logReq, logRes } = require('../log-utils');
 
 module.exports = function (app) {
 
@@ -41,6 +42,7 @@ module.exports = function (app) {
         res.send(data.toString());
       });
     });
+
   app.route('/_api/routes/api.js')
     .get(function (req, res, next) {
       console.log('requested');
@@ -49,6 +51,7 @@ module.exports = function (app) {
         res.type('txt').send(data.toString());
       });
     });
+
   app.route('/_api/controllers/convertHandler.js')
     .get(function (req, res, next) {
       console.log('requested');
@@ -58,7 +61,7 @@ module.exports = function (app) {
       });
     });
 
-  app.get('/_api/get-tests', cors(), function (req, res, next) {
+  app.get('/_api/get-tests', cors(), logReq({ query: true, body: true, params: false }), logRes, function (req, res, next) {
     console.log('requested');
     console.log('current runner.isRunning', runner.isRunning);
     console.log('current runner.report', runner.report);
