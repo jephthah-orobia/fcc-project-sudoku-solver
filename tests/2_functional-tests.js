@@ -6,8 +6,8 @@ const { valid, invalid_chars, none81, cannotBeSolved } = require('../controllers
 const { setDebugging, log, logEr, logPropsOf } = require('../log-utils');
 
 chai.use(chaiHttp);
-const isLocal = process.env.NODE_ENV == 'local';
-setDebugging(isLocal);
+const logTest = process.env.LOG_TEST == 'yes';
+setDebugging(logTest);
 suite('Functional Tests', () => {
     const solutionKey = ['solution'];
     const errorKey = ['error'];
@@ -38,7 +38,7 @@ suite('Functional Tests', () => {
                                     done();
                                 });
                         });
-                        if (!isLocal) break;
+                        if (!logTest) break;
                     }
                 });
 
@@ -87,7 +87,7 @@ suite('Functional Tests', () => {
                                     done();
                                 });
                         });
-                        if (!isLocal) break;
+                        if (!logTest) break;
                     }
                 });
 
@@ -106,7 +106,7 @@ suite('Functional Tests', () => {
                                     done();
                                 });
                         });
-                        if (!isLocal) break;
+                        if (!logTest) break;
                     }
                 });
 
@@ -126,7 +126,7 @@ suite('Functional Tests', () => {
                                 });
                         })
 
-                        if (!isLocal) break;
+                        if (!logTest) break;
                     }
                 });
 
@@ -352,7 +352,7 @@ suite('Functional Tests', () => {
                                     done();
                                 });
                         });
-                        if (!isLocal) break;
+                        if (!logTest) break;
                     }
                 });
 
@@ -374,7 +374,7 @@ suite('Functional Tests', () => {
                                     done();
                                 });
                         });
-                        if (!isLocal) break;
+                        if (!logTest) break;
                     }
 
                 });
