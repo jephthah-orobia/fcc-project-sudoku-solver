@@ -10,7 +10,7 @@ const runner = require('./test-runner');
 
 const { setDebugging, logReq, logRes } = require('./log-utils');
 
-setDebugging(true);
+setDebugging(process.env.NODE_ENV == 'local');
 
 const app = express();
 
