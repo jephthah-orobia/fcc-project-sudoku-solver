@@ -8,6 +8,10 @@ const fccTestingRoutes = require('./routes/fcctesting.js');
 const apiRoutes = require('./routes/api.js');
 const runner = require('./test-runner');
 
+const { setDebugging, logReq, logRes } = require('./log-utils');
+
+setDebugging(true);
+
 const app = express();
 
 app.use('/public', express.static(process.cwd() + '/public'));
@@ -15,6 +19,9 @@ app.use(cors({ origin: '*' })); //For FCC testing purposes only
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use(logReq({ body: true, params: true, query: true }));
+app.use(logRes);
 
 //Index page (static HTML)
 app.route('/')

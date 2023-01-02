@@ -2,9 +2,6 @@
 require('dotenv').config();
 
 const SudokuSolver = require('../controllers/sudoku-solver.js');
-const { setDebugging, logReq, logRes } = require('../log-utils');
-
-setDebugging(process.env.DEBUG == 'yes');
 
 module.exports = function (app) {
 
@@ -18,7 +15,7 @@ module.exports = function (app) {
 
 
   app.route('/api/check')
-    .post(logReq('body'), logRes, (req, res) => {
+    .post((req, res) => {
       const puzzle = req.body?.puzzle,
         coordinate = req.body?.coordinate,
         value = req.body?.value;
@@ -44,7 +41,7 @@ module.exports = function (app) {
     });
 
   app.route('/api/solve')
-    .post(logReq({ body: true }), logRes, (req, res) => {
+    .post((req, res) => {
       const puzzle = req.body?.puzzle?.valueOf();
       if (!puzzle || puzzle == '')
         res.json({ error: noPuzzleE });
